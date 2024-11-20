@@ -4,6 +4,17 @@
 const DATA_FLAG = "-d '";
 const CONTENT_LENGTH_HEADER = "-H 'Content-Length:";
 
+function wrapAsCurlData(data: string): string {
+  return `${DATA_FLAG}${data.replace(/'/g, "'\\''")}'`;
+}
+
+function unwrapCurlData(part: string): string | undefined {
+  if (!part.startsWith(DATA_FLAG)) {
+    return undefined;
+  }
+  return part.slice(DATA_FLAG.length, -1);
+}
+
 type CurlLogger = (curlCommandParts: string[]) => void;
 
 /**
@@ -44,7 +55,7 @@ const fetchProxyCurlLogger = (
       if (typeof init.body !== 'string') {
         throw new Error(`Body must be a string, got ${typeof init.body}`);
       }
-      curlCmd.push(`${DATA_FLAG}${init.body.replace(/'/g, "'\\''")}'`);
+      curlCmd.push(wrapAsCurlData(init.body));
     }
 
     logger(curlCmd);
@@ -58,17 +69,16 @@ export type { CurlLogger, FetchProxyCurlLoggerOptions };
 /**
  * Sample logger that pretty prints JSON bodies and headers while removing Content-Length
  */
-export const prettyJsonLogger: CurlLogger = (curlCommandParts: string[]) => {
+function prettyJsonLogger(curlCommandParts: string[]): void {
   let hasJsonBody = false;
 
-  // First pass - detect and format JSON, detect if we have JSON content
   const jsonFormattedParts = curlCommandParts.map(part => {
-    if (part.startsWith(DATA_FLAG)) {
+    const data = unwrapCurlData(part);
+    if (data !== undefined) {
       try {
-        const jsonStr = part.slice(DATA_FLAG.length, -1);
-        const parsed = JSON.parse(jsonStr);
+        const parsed = JSON.parse(data);
         hasJsonBody = true;
-        return `${DATA_FLAG}${JSON.stringify(parsed, null, 2)}'`;
+        return wrapAsCurlData(JSON.stringify(parsed, null, 2));
       } catch {
         return part;
       }
@@ -76,10 +86,9 @@ export const prettyJsonLogger: CurlLogger = (curlCommandParts: string[]) => {
     return part;
   });
 
-  // Second pass - only remove Content-Length if we found JSON
   const finalParts = hasJsonBody
     ? jsonFormattedParts.filter(part => !part.startsWith(CONTENT_LENGTH_HEADER))
     : jsonFormattedParts;
 
   console.error(finalParts.join(' \\\n  '));
-};
+}
