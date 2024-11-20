@@ -4,10 +4,20 @@
 const DATA_FLAG = "-d '";
 const CONTENT_LENGTH_HEADER = "-H 'Content-Length:";
 
+/**
+ * Wraps data for use in a curl command by escaping single quotes and adding -d flag
+ * @param data - The string data to be wrapped
+ * @returns The data wrapped in curl's -d flag syntax with proper escaping
+ */
 function wrapAsCurlData(data: string): string {
   return `${DATA_FLAG}${data.replace(/'/g, "'\\''")}'`;
 }
 
+/**
+ * Extracts data from a curl command's -d parameter by removing the flag and unescaping
+ * @param part - A part of the curl command that might contain -d data
+ * @returns The unwrapped data string if part starts with -d flag, undefined otherwise
+ */
 function unwrapCurlData(part: string): string | undefined {
   if (!part.startsWith(DATA_FLAG)) {
     return undefined;
