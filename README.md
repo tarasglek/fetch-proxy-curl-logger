@@ -69,14 +69,20 @@ curl -X POST 'https://api.example.com/data' \
 Pretty JSON logger:
 
 ```bash
-curl -X POST 'https://api.example.com/data' \
-  -H 'Content-Type: application/json' \
-  -d '{
+# Save payload to fetch_payload.json:
+cat > fetch_payload.json << 'EOF'
+{
   "nested": {
     "objects": "are",
     "pretty": "printed"
   }
-}'
+}
+EOF
+
+# Execute curl command:
+curl -X POST 'https://api.example.com/data' \
+  -H 'Content-Type: application/json' \
+  -d @fetch_payload.json
 ```
 
 ## Features
