@@ -34,16 +34,16 @@ export interface FetchProxyCurlLoggerOptions {
  * @returns Proxied fetch function
  */
 export function fetchProxyCurlLogger(
-  options: FetchProxyCurlLoggerOptions = {}
-): ((input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) {
+  options: FetchProxyCurlLoggerOptions = {},
+): (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> {
   const {
-    logger = (parts) => console.error(parts.join(' \\\n  ')),
-    fetch: customFetch = fetch
+    logger = (parts) => console.error(parts.join(" \\\n  ")),
+    fetch: customFetch = fetch,
   } = options;
 
   return (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     const url = input instanceof Request ? input.url : input.toString();
-    const method = init?.method || 'GET';
+    const method = init?.method || "GET";
     const curlCmd: string[] = [`curl -X ${method} '${url}'`];
 
     if (init?.headers) {
@@ -53,7 +53,7 @@ export function fetchProxyCurlLogger(
     }
 
     if (init?.body) {
-      if (typeof init.body !== 'string') {
+      if (typeof init.body !== "string") {
         throw new Error(`Body must be a string, got ${typeof init.body}`);
       }
       curlCmd.push(wrapAsCurlData(init.body));
@@ -62,16 +62,16 @@ export function fetchProxyCurlLogger(
     logger(curlCmd);
     return customFetch(input, init);
   };
-};
+}
 
 /**
  * Sample logger that pretty prints JSON bodies and headers while removing Content-Length
  */
 export function prettyJsonLogger(curlCommandParts: string[]): void {
   let hasJsonBody = false;
-  const payloadFile = 'fetch_payload.json';
+  const payloadFile = "fetch_payload.json";
 
-  const jsonFormattedParts = curlCommandParts.map(part => {
+  const jsonFormattedParts = curlCommandParts.map((part) => {
     const data = unwrapCurlData(part);
     if (data !== undefined) {
       try {
@@ -87,15 +87,29 @@ export function prettyJsonLogger(curlCommandParts: string[]): void {
   });
 
   const finalParts = hasJsonBody
-    ? jsonFormattedParts.filter(part => !part.startsWith(CONTENT_LENGTH_HEADER))
+    ? jsonFormattedParts.filter((part) =>
+      !part.startsWith(CONTENT_LENGTH_HEADER)
+    )
     : jsonFormattedParts;
 
   if (hasJsonBody) {
     console.error(`# Save payload to ${payloadFile}:`);
     console.error(`cat > ${payloadFile} << 'EOF'`);
-    console.error(`${JSON.stringify(JSON.parse(unwrapCurlData(curlCommandParts.find(p => p.startsWith(DATA_FLAG))!)!), null, 2)}`);
-    console.error('EOF');
-    console.error('\n# Execute curl command:');
+    console.error(
+      `${
+        JSON.stringify(
+          JSON.parse(
+            unwrapCurlData(
+              curlCommandParts.find((p) => p.startsWith(DATA_FLAG))!,
+            )!,
+          ),
+          null,
+          2,
+        )
+      }`,
+    );
+    console.error("EOF");
+    console.error("\n# Execute curl command:");
   }
-  console.error(finalParts.join(' \\\n  '));
+  console.error(finalParts.join(" \\\n  "));
 }
