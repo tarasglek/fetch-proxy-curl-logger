@@ -69,6 +69,7 @@ export function fetchProxyCurlLogger(
  */
 export function prettyJsonLogger(curlCommandParts: string[]): void {
   let hasJsonBody = false;
+  const payloadFile = 'fetch_payload.json';
 
   const jsonFormattedParts = curlCommandParts.map(part => {
     const data = unwrapCurlData(part);
@@ -76,7 +77,7 @@ export function prettyJsonLogger(curlCommandParts: string[]): void {
       try {
         const parsed = JSON.parse(data);
         hasJsonBody = true;
-        return wrapAsCurlData(JSON.stringify(parsed, null, 2));
+        return `-d @${payloadFile}`;
       } catch (e) {
         console.error(e instanceof Error ? e.stack : e);
         return part;
@@ -89,5 +90,12 @@ export function prettyJsonLogger(curlCommandParts: string[]): void {
     ? jsonFormattedParts.filter(part => !part.startsWith(CONTENT_LENGTH_HEADER))
     : jsonFormattedParts;
 
+  if (hasJsonBody) {
+    console.error(`# Save payload to ${payloadFile}:`);
+    console.error(`cat > ${payloadFile} << 'EOF'`);
+    console.error(`${JSON.stringify(JSON.parse(unwrapCurlData(curlCommandParts.find(p => p.startsWith(DATA_FLAG))!)!), null, 2)}`);
+    console.error('EOF');
+    console.error('\n# Execute curl command:');
+  }
   console.error(finalParts.join(' \\\n  '));
 }
