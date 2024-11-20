@@ -33,7 +33,7 @@ const fetchProxyCurlLogger = (
     const url = input instanceof Request ? input.url : input.toString();
     const method = init?.method || 'GET';
     const curlCmd: string[] = [`curl -X ${method} '${url}'`];
-    
+
     if (init?.headers) {
       Object.entries(init.headers).forEach(([key, value]) => {
         curlCmd.push(`-H '${key}: ${value}'`);
@@ -54,9 +54,6 @@ const fetchProxyCurlLogger = (
 
 export { fetchProxyCurlLogger };
 export type { CurlLogger, FetchProxyCurlLoggerOptions };
-
-const DATA_FLAG = "-d '";
-const CONTENT_LENGTH_HEADER = "-H 'Content-Length:";
 
 /**
  * Sample logger that pretty prints JSON bodies and headers while removing Content-Length
@@ -80,7 +77,7 @@ export const prettyJsonLogger: CurlLogger = (curlCommandParts: string[]) => {
   });
 
   // Second pass - only remove Content-Length if we found JSON
-  const finalParts = hasJsonBody 
+  const finalParts = hasJsonBody
     ? jsonFormattedParts.filter(part => !part.startsWith(CONTENT_LENGTH_HEADER))
     : jsonFormattedParts;
 
