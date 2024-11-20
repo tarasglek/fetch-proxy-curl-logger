@@ -57,6 +57,7 @@ const fetchWithCustomImpl = fetchProxyCurlLogger({
 
 Example output:
 
+Basic logger:
 ```bash
 curl -X POST 'https://api.example.com/data' \
   -H 'Content-Type: application/json' \
@@ -64,7 +65,8 @@ curl -X POST 'https://api.example.com/data' \
   -d '{"key":"value"}'
 ```
 
-// Pretty JSON logger output:
+Pretty JSON logger:
+```bash
 curl -X POST 'https://api.example.com/data' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -73,6 +75,7 @@ curl -X POST 'https://api.example.com/data' \
     "pretty": "printed"
   }
 }'
+```
 
 ## Features
 
