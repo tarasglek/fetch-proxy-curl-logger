@@ -1,5 +1,6 @@
 {
     "name": "@tarasglek/fetch-proxy-curl-logger",
     "version": "0.0.1",
-    "exports": "./mod.ts"
+    "exports": "./mod.ts",
+    "license": "MIT"
 }
