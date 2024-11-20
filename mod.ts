@@ -2,7 +2,7 @@
  * Type definition for curl command logger function
  */
 const DATA_FLAG = "-d '";
-const CONTENT_LENGTH_HEADER = "-H '";
+const CONTENT_LENGTH_HEADER = "-H 'Content-Length:";
 
 type CurlLogger = (curlCommandParts: string[]) => void;
 
@@ -36,7 +36,7 @@ const fetchProxyCurlLogger = (
     
     if (init?.headers) {
       Object.entries(init.headers).forEach(([key, value]) => {
-        curlCmd.push(`${CONTENT_LENGTH_HEADER}${key}: ${value}'`);
+        curlCmd.push(`-H '${key}: ${value}'`);
       });
     }
 
