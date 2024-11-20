@@ -22,6 +22,19 @@ fetch("https://api.example.com/data", {
     body: JSON.stringify({ key: "value" }),
 });
 
+// Pretty print JSON and remove Content-Length headers
+const fetchWithPrettyJson = fetchProxyCurlLogger({
+    logger: prettyJsonLogger
+});
+fetchWithPrettyJson("https://api.example.com/data", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Content-Length": "123"
+    },
+    body: JSON.stringify({ nested: { objects: "are", pretty: "printed" } })
+});
+
 // Custom logger that replaces Authorization header with env var
 const fetchWithEnvAuth = fetchProxyCurlLogger({
     logger: (parts) => {
@@ -51,6 +64,16 @@ curl -X POST 'https://api.example.com/data' \
   -d '{"key":"value"}'
 ```
 
+// Pretty JSON logger output:
+curl -X POST 'https://api.example.com/data' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "nested": {
+    "objects": "are",
+    "pretty": "printed"
+  }
+}'
+
 ## Features
 
 - 🔍 Logs equivalent cURL commands for all fetch requests
@@ -59,6 +82,7 @@ curl -X POST 'https://api.example.com/data' \
 - 📝 TypeScript support
 - 🪶 Zero dependencies
 - 🔒 Preserves original fetch behavior
+- 🎯 Built-in pretty JSON formatting logger
 
 ## API
 
@@ -80,6 +104,13 @@ interface FetchProxyCurlLoggerOptions {
 - `logger`: Custom logging function that receives array of command parts
 - `fetch`: Custom fetch implementation for chaining
 - Returns: Proxied fetch function with identical signature to native fetch
+
+### prettyJsonLogger
+
+A sample logger implementation that:
+- Pretty prints JSON request bodies with proper indentation
+- Removes Content-Length headers when JSON is detected
+- Maintains original formatting for non-JSON requests
 
 ## License
 
