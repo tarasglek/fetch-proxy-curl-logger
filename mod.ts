@@ -78,7 +78,7 @@ export function prettyJsonLogger(curlCommandParts: string[]): void {
         hasJsonBody = true;
         return wrapAsCurlData(JSON.stringify(parsed, null, 2));
       } catch (e) {
-        console.error(e.stack);
+        console.error(e instanceof Error ? e.stack : e);
         return part;
       }
     }
