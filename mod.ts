@@ -15,12 +15,12 @@ function unwrapCurlData(part: string): string | undefined {
   return part.slice(DATA_FLAG.length, -1);
 }
 
-type CurlLogger = (curlCommandParts: string[]) => void;
+export type CurlLogger = (curlCommandParts: string[]) => void;
 
 /**
  * Configuration options for fetch proxy curl logger
  */
-interface FetchProxyCurlLoggerOptions {
+export interface FetchProxyCurlLoggerOptions {
   /** Custom logger function */
   logger?: CurlLogger;
   /** Custom fetch implementation */
@@ -32,9 +32,9 @@ interface FetchProxyCurlLoggerOptions {
  * @param {FetchProxyCurlLoggerOptions} [options] - Configuration options
  * @returns Proxied fetch function
  */
-const fetchProxyCurlLogger = (
+export function fetchProxyCurlLogger(
   options: FetchProxyCurlLoggerOptions = {}
-): ((input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) => {
+): ((input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) {
   const {
     logger = (parts) => console.error(parts.join(' \\\n  ')),
     fetch: customFetch = fetch
@@ -63,13 +63,10 @@ const fetchProxyCurlLogger = (
   };
 };
 
-export { fetchProxyCurlLogger };
-export type { CurlLogger, FetchProxyCurlLoggerOptions };
-
 /**
  * Sample logger that pretty prints JSON bodies and headers while removing Content-Length
  */
-function prettyJsonLogger(curlCommandParts: string[]): void {
+export function prettyJsonLogger(curlCommandParts: string[]): void {
   let hasJsonBody = false;
 
   const jsonFormattedParts = curlCommandParts.map(part => {
