@@ -1,4 +1,4 @@
-# @tarasglek/fetch-proxy-curl-logger
+# [jsr:@tarasglek/fetch-proxy-curl-logger](https://jsr.io/@tarasglek/fetch-proxy-curl-logger)
 
 A lightweight utility that wraps the Fetch API to log equivalent cURL commands
 for each request.
