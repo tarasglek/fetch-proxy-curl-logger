@@ -51,3 +51,35 @@ const fetchProxyCurlLogger = (
 
 export { fetchProxyCurlLogger };
 export type { CurlLogger, FetchProxyCurlLoggerOptions };
+
+const DATA_FLAG = "-d '";
+const CONTENT_LENGTH_HEADER = "-H 'Content-Length:";
+
+/**
+ * Sample logger that pretty prints JSON bodies and headers while removing Content-Length
+ */
+export const prettyJsonLogger: CurlLogger = (curlCommandParts: string[]) => {
+  let hasJsonBody = false;
+
+  // First pass - detect and format JSON, detect if we have JSON content
+  const jsonFormattedParts = curlCommandParts.map(part => {
+    if (part.startsWith(DATA_FLAG)) {
+      try {
+        const jsonStr = part.slice(DATA_FLAG.length, -1);
+        const parsed = JSON.parse(jsonStr);
+        hasJsonBody = true;
+        return `${DATA_FLAG}${JSON.stringify(parsed, null, 2)}'`;
+      } catch {
+        return part;
+      }
+    }
+    return part;
+  });
+
+  // Second pass - only remove Content-Length if we found JSON
+  const finalParts = hasJsonBody 
+    ? jsonFormattedParts.filter(part => !part.startsWith(CONTENT_LENGTH_HEADER))
+    : jsonFormattedParts;
+
+  console.error(finalParts.join(' \\\n  '));
+};
