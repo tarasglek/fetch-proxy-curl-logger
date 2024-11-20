@@ -1,6 +1,9 @@
 /**
  * Type definition for curl command logger function
  */
+const DATA_FLAG = "-d '";
+const CONTENT_LENGTH_HEADER = "-H '";
+
 type CurlLogger = (curlCommandParts: string[]) => void;
 
 /**
@@ -33,7 +36,7 @@ const fetchProxyCurlLogger = (
     
     if (init?.headers) {
       Object.entries(init.headers).forEach(([key, value]) => {
-        curlCmd.push(`-H '${key}: ${value}'`);
+        curlCmd.push(`${CONTENT_LENGTH_HEADER}${key}: ${value}'`);
       });
     }
 
@@ -41,7 +44,7 @@ const fetchProxyCurlLogger = (
       if (typeof init.body !== 'string') {
         throw new Error(`Body must be a string, got ${typeof init.body}`);
       }
-      curlCmd.push(`-d '${init.body.replace(/'/g, "'\\''")}'`);
+      curlCmd.push(`${DATA_FLAG}${init.body.replace(/'/g, "'\\''")}'`);
     }
 
     logger(curlCmd);
