@@ -12,7 +12,8 @@ function unwrapCurlData(part: string): string | undefined {
   if (!part.startsWith(DATA_FLAG)) {
     return undefined;
   }
-  return part.slice(DATA_FLAG.length, -1);
+  // Remove the DATA_FLAG prefix and trailing quote, then unescape single quotes
+  return part.slice(DATA_FLAG.length, -1).replace(/\\'/g, "'");
 }
 
 export type CurlLogger = (curlCommandParts: string[]) => void;
