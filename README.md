@@ -40,11 +40,11 @@ const fetchWithEnvAuth = fetchProxyCurlLogger({
     logger: (parts) => {
         const envParts = parts.map((part) => {
             if (part.startsWith("-H 'Authorization:")) {
-                return '-H "Authorization: $AUTHORIZATION"';
+                return "-H 'Authorization: $AUTHORIZATION'";
             }
             return part;
         });
-        console.log(envParts.join(" \\\n  "));
+        console.error(envParts.join(" \\\n  "));
     },
 });
 
