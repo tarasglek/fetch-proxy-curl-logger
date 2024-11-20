@@ -12,7 +12,7 @@ npx jsr add @tarasglek/fetch-proxy-curl-logger
 ## Usage
 
 ```js
-import { fetchProxyCurlLogger } from "@tarasglek/fetch-proxy-curl-logger";
+import { fetchProxyCurlLogger, prettyJsonLogger } from "@tarasglek/fetch-proxy-curl-logger";
 
 // Basic usage with default logger
 const fetch = fetchProxyCurlLogger();
