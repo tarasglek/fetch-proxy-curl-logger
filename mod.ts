@@ -4,8 +4,8 @@
 const DATA_FLAG = "-d '";
 const CONTENT_LENGTH_HEADER = "-H 'Content-Length:";
 const AUTH_HEADER = "-H 'Authorization:";
-const contentLengthRegex = new RegExp(`^${CONTENT_LENGTH_HEADER}`, 'i');
-const authHeaderRegex = new RegExp(`^${AUTH_HEADER}`, 'i');
+const contentLengthRegex = new RegExp(`^${CONTENT_LENGTH_HEADER}`, "i");
+const authHeaderRegex = new RegExp(`^${AUTH_HEADER}`, "i");
 const BEARER_PREFIX = "Bearer ";
 
 /**
@@ -90,18 +90,21 @@ function maskAuthorizationHeader(headerPart: string): string {
 
   const authValue = headerPart.slice(AUTH_HEADER.length, -1).trim();
   const isBearer = authValue.startsWith(BEARER_PREFIX);
-  const valueToMatch = isBearer 
-    ? authValue.slice(BEARER_PREFIX.length) 
+  const valueToMatch = isBearer
+    ? authValue.slice(BEARER_PREFIX.length)
     : authValue;
 
   // Check all environment variables using optional chaining
+  // tslint:disable-next-line:no-any
   for (const [key, value] of Object.entries(globalThis?.process?.env ?? {})) {
     if (value === valueToMatch) {
       // Removed single quotes, using double quotes for the variable
-      return `-H "Authorization: ${isBearer ? `${BEARER_PREFIX}$` : "$"}${key}"`;
+      return `-H "Authorization: ${
+        isBearer ? `${BEARER_PREFIX}$` : "$"
+      }${key}"`;
     }
   }
-  
+
   return headerPart;
 }
 
@@ -116,7 +119,6 @@ export function prettyJsonLogger(curlCommandParts: string[]): void {
     const data = unwrapCurlData(part);
     if (data !== undefined) {
       try {
-        const parsed = JSON.parse(data);
         hasJsonBody = true;
         return `-d @${payloadFile}`;
       } catch (e) {
@@ -128,9 +130,7 @@ export function prettyJsonLogger(curlCommandParts: string[]): void {
   });
 
   const finalParts = hasJsonBody
-    ? jsonFormattedParts.filter((part) =>
-      !contentLengthRegex.test(part)
-    )
+    ? jsonFormattedParts.filter((part) => !contentLengthRegex.test(part))
     : jsonFormattedParts;
 
   if (hasJsonBody) {

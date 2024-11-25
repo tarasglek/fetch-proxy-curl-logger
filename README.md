@@ -12,8 +12,12 @@ npx jsr add @tarasglek/fetch-proxy-curl-logger
 ## Usage
 
 ### Basic example
+
 ```js
-import { fetchProxyCurlLogger, prettyJsonLogger } from "@tarasglek/fetch-proxy-curl-logger";
+import {
+  fetchProxyCurlLogger,
+  prettyJsonLogger,
+} from "@tarasglek/fetch-proxy-curl-logger";
 
 // Basic usage with default logger
 const fetch = fetchProxyCurlLogger();
@@ -56,8 +60,6 @@ const fetchWithCustomImpl = fetchProxyCurlLogger({
 });
 ```
 
-
-
 Basic logger
 
 ```bash
@@ -87,30 +89,35 @@ curl -X POST 'https://api.example.com/data' \
 
 ### OpenAI Client Example with Environment Variable Detection/Substitution
 
-`prettyJsonLogger` will match environment variables with Authorization header. Here is an example of logging OpenAI client as curl using env var for token.
+`prettyJsonLogger` will match environment variables with Authorization header.
+Here is an example of logging OpenAI client as curl using env var for token.
 
 ```javascript
 import OpenAI from "openai";
-import { fetchProxyCurlLogger, prettyJsonLogger } from "@tarasglek/fetch-proxy-curl-logger";
+import {
+  fetchProxyCurlLogger,
+  prettyJsonLogger,
+} from "@tarasglek/fetch-proxy-curl-logger";
 
 // When OPENAI_API_KEY is set in your environment,
 // the logger will automatically replace the token with $OPENAI_API_KEY
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   fetch: fetchProxyCurlLogger({
-    logger: prettyJsonLogger
-  })
+    logger: prettyJsonLogger,
+  }),
 });
 
 // This will log the curl command with the authorization token
 // automatically replaced by $OPENAI_API_KEY
 await openai.chat.completions.create({
   model: "gpt-4o-mini",
-  messages: [{ role: "user", content: "Hello!" }]
+  messages: [{ role: "user", content: "Hello!" }],
 });
 ```
 
 Will output something like:
+
 ```bash
 # Save payload to fetch_payload.json:
 cat > fetch_payload.json << 'EOF'
@@ -140,7 +147,6 @@ curl -X POST 'https://api.openai.com/v1/chat/completions' \
 - 🔒 Preserves original fetch behavior
 - 🎯 Built-in pretty JSON formatting logger
 - 🔐 Automatic environment variable substitution for auth tokens
-
 
 ## API
 
