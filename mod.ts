@@ -128,7 +128,7 @@ export function prettyJsonLogger(curlCommandParts: string[]): void {
 
   const finalParts = hasJsonBody
     ? jsonFormattedParts.filter((part) =>
-      !part.toLowerCase().startsWith(CONTENT_LENGTH_HEADER)
+      !contentLengthRegex.test(part)
     )
     : jsonFormattedParts;
 
