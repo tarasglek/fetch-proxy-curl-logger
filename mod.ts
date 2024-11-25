@@ -97,7 +97,8 @@ function maskAuthorizationHeader(headerPart: string): string {
   // Check all environment variables using optional chaining
   for (const [key, value] of Object.entries(globalThis?.process?.env ?? {})) {
     if (value === valueToMatch) {
-      return `${AUTH_HEADER}${isBearer ? ` ${BEARER_PREFIX}` : ' '}$${key}'`;
+      // Removed single quotes, using double quotes for the variable
+      return `-H "Authorization: ${isBearer ? `${BEARER_PREFIX}$` : "$"}${key}"`;
     }
   }
   
