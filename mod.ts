@@ -84,8 +84,7 @@ export function fetchProxyCurlLogger(
  * @returns The modified header with env var if found, or original if not
  */
 function maskAuthorizationHeader(headerPart: string): string {
-  // Convert to lowercase for comparison
-  if (!headerPart.toLowerCase().startsWith(AUTH_HEADER)) {
+  if (!authHeaderRegex.test(headerPart)) {
     return headerPart;
   }
 
