@@ -95,13 +95,15 @@ function maskAuthorizationHeader(headerPart: string): string {
     : authValue;
 
   // Check all environment variables using optional chaining
-  // tslint:disable-next-line:no-any
-  for (const [key, value] of Object.entries(globalThis?.process?.env ?? {})) {
-    if (value === valueToMatch) {
-      // Removed single quotes, using double quotes for the variable
-      return `-H "Authorization: ${
-        isBearer ? `${BEARER_PREFIX}$` : "$"
-      }${key}"`;
+  const process = (globalThis as any).process;
+  if (process) {
+    for (const [key, value] of Object.entries(process.env)) {
+      if (value === valueToMatch) {
+        // Removed single quotes, using double quotes for the variable
+        return `-H "Authorization: ${
+          isBearer ? `${BEARER_PREFIX}$` : "$"
+        }${key}"`;
+      }
     }
   }
 

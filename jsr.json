@@ -1,6 +1,9 @@
 {
   "name": "@tarasglek/fetch-proxy-curl-logger",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "exports": "./mod.ts",
-  "license": "MIT"
+  "license": "MIT",
+  "exclude": [
+    ".github/**"
+  ]
 }
