@@ -2,8 +2,8 @@
  * Type definition for curl command logger function
  */
 const DATA_FLAG = "-d '";
-const CONTENT_LENGTH_HEADER = "-H 'Content-Length:";
-const AUTH_HEADER = "-H 'Authorization:";
+const CONTENT_LENGTH_HEADER = "-h 'content-length:";
+const AUTH_HEADER = "-h 'authorization:";
 const BEARER_PREFIX = "Bearer ";
 
 /**
@@ -82,7 +82,8 @@ export function fetchProxyCurlLogger(
  * @returns The modified header with env var if found, or original if not
  */
 function maskAuthorizationHeader(headerPart: string): string {
-  if (!headerPart.startsWith(AUTH_HEADER)) {
+  // Convert to lowercase for comparison
+  if (!headerPart.toLowerCase().startsWith(AUTH_HEADER)) {
     return headerPart;
   }
 
