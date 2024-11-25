@@ -3,6 +3,8 @@
  */
 const DATA_FLAG = "-d '";
 const CONTENT_LENGTH_HEADER = "-H 'Content-Length:";
+const AUTH_HEADER = "-H 'Authorization:";
+const BEARER_PREFIX = "Bearer ";
 
 /**
  * Wraps data for use in a curl command by escaping single quotes and adding -d flag
@@ -75,6 +77,32 @@ export function fetchProxyCurlLogger(
 }
 
 /**
+ * Tries to find an environment variable matching the authorization value
+ * @param headerPart - The header part of the curl command
+ * @returns The modified header with env var if found, or original if not
+ */
+function maskAuthorizationHeader(headerPart: string): string {
+  if (!headerPart.startsWith(AUTH_HEADER)) {
+    return headerPart;
+  }
+
+  const authValue = headerPart.slice(AUTH_HEADER.length, -1).trim();
+  const isBearer = authValue.startsWith(BEARER_PREFIX);
+  const valueToMatch = isBearer 
+    ? authValue.slice(BEARER_PREFIX.length) 
+    : authValue;
+
+  // Check all environment variables
+  for (const [key, value] of Object.entries(process.env)) {
+    if (value === valueToMatch) {
+      return `${AUTH_HEADER}${isBearer ? ` ${BEARER_PREFIX}` : ' '}$${key}'`;
+    }
+  }
+  
+  return headerPart;
+}
+
+/**
  * Sample logger that pretty prints JSON bodies and headers while removing Content-Length
  */
 export function prettyJsonLogger(curlCommandParts: string[]): void {
@@ -93,7 +121,7 @@ export function prettyJsonLogger(curlCommandParts: string[]): void {
         return part;
       }
     }
-    return part;
+    return maskAuthorizationHeader(part);
   });
 
   const finalParts = hasJsonBody
