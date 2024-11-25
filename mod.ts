@@ -2,8 +2,10 @@
  * Type definition for curl command logger function
  */
 const DATA_FLAG = "-d '";
-const CONTENT_LENGTH_HEADER = "-h 'content-length:";
-const AUTH_HEADER = "-h 'authorization:";
+const CONTENT_LENGTH_HEADER = "-H 'Content-Length:";
+const AUTH_HEADER = "-H 'Authorization:";
+const contentLengthRegex = new RegExp(`^${CONTENT_LENGTH_HEADER}`, 'i');
+const authHeaderRegex = new RegExp(`^${AUTH_HEADER}`, 'i');
 const BEARER_PREFIX = "Bearer ";
 
 /**
@@ -56,7 +58,7 @@ export function fetchProxyCurlLogger(
   return (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     const url = input instanceof Request ? input.url : input.toString();
     const method = init?.method || "GET";
-    const curlCmd: string[] = [`curl -X ${method} '${url}'`];
+    const curlCmd: string[] = [`curl -X ${method.toUpperCase()} '${url}'`];
 
     if (init?.headers) {
       Object.entries(init.headers).forEach(([key, value]) => {
@@ -127,7 +129,7 @@ export function prettyJsonLogger(curlCommandParts: string[]): void {
 
   const finalParts = hasJsonBody
     ? jsonFormattedParts.filter((part) =>
-      !part.startsWith(CONTENT_LENGTH_HEADER)
+      !part.toLowerCase().startsWith(CONTENT_LENGTH_HEADER)
     )
     : jsonFormattedParts;
 
