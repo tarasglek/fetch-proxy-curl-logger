@@ -139,6 +139,7 @@ curl -X POST 'https://api.openai.com/v1/chat/completions' \
 - 🪶 Zero dependencies
 - 🔒 Preserves original fetch behavior
 - 🎯 Built-in pretty JSON formatting logger
+- 🔐 Automatic environment variable substitution for auth tokens
 
 
 ## API
