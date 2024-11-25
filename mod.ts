@@ -92,8 +92,8 @@ function maskAuthorizationHeader(headerPart: string): string {
     ? authValue.slice(BEARER_PREFIX.length) 
     : authValue;
 
-  // Check all environment variables
-  for (const [key, value] of Object.entries(process.env)) {
+  // Check all environment variables using optional chaining
+  for (const [key, value] of Object.entries(globalThis?.process?.env ?? {})) {
     if (value === valueToMatch) {
       return `${AUTH_HEADER}${isBearer ? ` ${BEARER_PREFIX}` : ' '}$${key}'`;
     }
