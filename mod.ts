@@ -119,7 +119,6 @@ export function prettyJsonLogger(curlCommandParts: string[]): void {
       }`,
     );
     console.error("EOF");
-    console.error("\n# Execute curl command:");
   }
   console.error(finalParts.join(" \\\n  "));
 }
