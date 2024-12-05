@@ -58,7 +58,7 @@ export function fetchProxyCurlLogger(
   return (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     const url = input instanceof Request ? input.url : input.toString();
     const method = init?.method || "GET";
-    const curlCmd: string[] = [`curl -X ${method.toUpperCase()} '${url}'`];
+    const curlCmd: string[] = [`curl -i -X ${method.toUpperCase()} '${url}'`];
 
     if (init?.headers) {
       Object.entries(init.headers).forEach(([key, value]) => {
