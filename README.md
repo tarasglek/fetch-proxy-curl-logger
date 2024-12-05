@@ -63,7 +63,7 @@ const fetchWithCustomImpl = fetchProxyCurlLogger({
 Basic logger
 
 ```bash
-curl -X POST 'https://api.example.com/data' \
+curl -i -X POST 'https://api.example.com/data' \
   -H 'Content-Type: application/json' \
   -H "Authorization: $AUTHORIZATION" \
   -d '{"key":"value"}'
@@ -82,7 +82,7 @@ cat > fetch_payload.json << 'EOF'
 }
 EOF
 
-curl -X POST 'https://api.example.com/data' \
+curl -i -X POST 'https://api.example.com/data' \
   -H 'Content-Type: application/json' \
   -d @fetch_payload.json
 ```
@@ -131,7 +131,7 @@ cat > fetch_payload.json << 'EOF'
   ]
 }
 EOF
-curl -X POST 'https://api.openai.com/v1/chat/completions' \
+curl -i -X POST 'https://api.openai.com/v1/chat/completions' \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer $OPENAI_API_KEY' \  # Token automatically replaced!
   -d @fetch_payload.json
